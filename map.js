@@ -64,7 +64,6 @@ L.control.scale({
 
 // 云南省边界 GeoJSON
 const YUNNAN_GEOJSON_URL = './yunnan-boundary.json';
-
 /* =========================
    28 个驿站数据
 ========================= */
