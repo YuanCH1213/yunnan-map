@@ -1,0 +1,757 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    overflow: hidden;
+    font-family: "STKaiti", "KaiTi", "STSong", "SimSun", serif;
+    background: #dfc79c;
+    color: #4d3522;
+}
+
+/* =========================
+   整体画布
+========================= */
+.page-frame {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    padding: 16px;
+    background:
+        radial-gradient(circle at center, rgba(250, 239, 211, 0.95), rgba(219, 196, 153, 0.95)),
+        #dfc79c;
+}
+
+/* =========================
+   地图主容器
+========================= */
+.map-shell {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border: 4px solid rgba(115, 78, 40, 0.82);
+    border-radius: 10px;
+    background: #ead8b5;
+    box-shadow:
+        inset 0 0 0 2px rgba(255, 244, 219, 0.65),
+        inset 0 0 80px rgba(82, 54, 26, 0.18),
+        0 12px 32px rgba(66, 43, 20, 0.22);
+}
+
+.map-shell::before,
+.map-shell::after {
+    content: "";
+    position: absolute;
+    z-index: 1200;
+    width: 92px;
+    height: 92px;
+    pointer-events: none;
+    opacity: 0.85;
+}
+
+.map-shell::before {
+    top: 10px;
+    left: 10px;
+    border-top: 4px double rgba(115, 78, 40, 0.8);
+    border-left: 4px double rgba(115, 78, 40, 0.8);
+    border-top-left-radius: 6px;
+}
+
+.map-shell::after {
+    bottom: 10px;
+    right: 10px;
+    border-bottom: 4px double rgba(115, 78, 40, 0.8);
+    border-right: 4px double rgba(115, 78, 40, 0.8);
+    border-bottom-right-radius: 6px;
+}
+
+#map {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background: #ead8b5;
+}
+
+/* 默认古风底图滤镜 */
+.map-shell .leaflet-tile-pane {
+    filter: sepia(0.34) saturate(0.72) brightness(1.08) contrast(0.92);
+}
+
+/* 实景影像模式 */
+.map-shell.satellite-mode .leaflet-tile-pane {
+    filter: saturate(0.96) contrast(1.05) brightness(0.92);
+}
+
+/* =========================
+   地图纹理
+========================= */
+.paper-texture {
+    position: absolute;
+    inset: 0;
+    z-index: 300;
+    pointer-events: none;
+    opacity: 0.24;
+    mix-blend-mode: multiply;
+    background-image:
+        radial-gradient(circle at 20% 30%, rgba(112, 77, 39, 0.22) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 70% 60%, rgba(112, 77, 39, 0.14) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 40% 80%, rgba(112, 77, 39, 0.12) 0 1.2px, transparent 1.8px),
+        repeating-linear-gradient(
+            35deg,
+            rgba(124, 89, 52, 0.03) 0,
+            rgba(124, 89, 52, 0.03) 2px,
+            transparent 2px,
+            transparent 8px
+        );
+}
+
+.map-shell.satellite-mode .paper-texture {
+    opacity: 0.10;
+}
+
+.map-vignette {
+    position: absolute;
+    inset: 0;
+    z-index: 320;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at center, transparent 54%, rgba(92, 61, 31, 0.08) 78%, rgba(73, 47, 22, 0.18) 100%);
+}
+
+.map-shell.satellite-mode .map-vignette {
+    background:
+        radial-gradient(circle at center, transparent 62%, rgba(38, 30, 20, 0.10) 84%, rgba(30, 22, 15, 0.22) 100%);
+}
+
+/* =========================
+   顶部题签
+========================= */
+.map-title-banner {
+    position: absolute;
+    top: 28px;
+    left: 50%;
+    z-index: 1000;
+    transform: translateX(-50%);
+    min-width: 420px;
+    padding: 14px 34px 16px;
+    text-align: center;
+    color: #5d3c20;
+    background:
+        linear-gradient(135deg, rgba(255, 247, 226, 0.97), rgba(236, 216, 179, 0.97));
+    border: 2px solid rgba(121, 80, 40, 0.72);
+    border-radius: 6px 6px 18px 18px;
+    box-shadow:
+        0 8px 22px rgba(78, 50, 25, 0.18),
+        inset 0 0 20px rgba(255, 249, 235, 0.68);
+    pointer-events: none;
+}
+
+.banner-small {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 13px;
+    letter-spacing: 4px;
+    color: #96703f;
+}
+
+.map-title-banner h1 {
+    font-size: 30px;
+    letter-spacing: 6px;
+    font-weight: bold;
+}
+
+/* =========================
+   罗盘
+========================= */
+.compass {
+    position: absolute;
+    top: 128px;
+    left: 58px;
+    z-index: 1000;
+    width: 118px;
+    height: 118px;
+    border-radius: 50%;
+    border: 2px solid rgba(101, 70, 38, 0.68);
+    background: rgba(248, 235, 203, 0.72);
+    box-shadow:
+        inset 0 0 15px rgba(96, 63, 29, 0.16),
+        0 8px 18px rgba(78, 50, 25, 0.12);
+    pointer-events: none;
+}
+
+.compass::before,
+.compass::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background: rgba(102, 67, 33, 0.48);
+    transform: translate(-50%, -50%);
+}
+
+.compass::before {
+    width: 1.5px;
+    height: 88px;
+}
+
+.compass::after {
+    width: 88px;
+    height: 1.5px;
+}
+
+.north,
+.south,
+.west,
+.east {
+    position: absolute;
+    color: #5f3d21;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.north {
+    top: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.south {
+    bottom: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.west {
+    left: -24px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.east {
+    right: -24px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.needle {
+    position: absolute;
+    left: 50%;
+    top: 17px;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 42px solid rgba(111, 72, 35, 0.85);
+}
+
+.needle::after {
+    content: "";
+    position: absolute;
+    left: -10px;
+    top: 42px;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 42px solid rgba(154, 116, 67, 0.72);
+}
+
+.needle-horizontal {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    width: 78px;
+    height: 2px;
+    transform: translateY(-50%);
+    background: rgba(102, 67, 33, 0.56);
+}
+
+/* =========================
+   中央省名水印
+========================= */
+.province-watermark {
+    position: absolute;
+    left: 47%;
+    top: 54%;
+    z-index: 340;
+    transform: translate(-50%, -50%);
+    font-size: 58px;
+    font-weight: bold;
+    letter-spacing: 14px;
+    color: rgba(117, 83, 44, 0.18);
+    text-shadow: 0 1px 0 rgba(255, 244, 220, 0.45);
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.map-shell.satellite-mode .province-watermark {
+    color: rgba(255, 238, 199, 0.22);
+    text-shadow: 0 2px 8px rgba(40, 28, 16, 0.55);
+}
+
+/* =========================
+   水墨装饰
+========================= */
+.ink-mountain {
+    position: absolute;
+    z-index: 360;
+    pointer-events: none;
+    opacity: 0.16;
+}
+
+.left-mountain {
+    left: 15px;
+    bottom: 76px;
+    width: 300px;
+    height: 250px;
+    background:
+        radial-gradient(ellipse at bottom left, rgba(90, 72, 48, 0.52), transparent 62%),
+        radial-gradient(ellipse at 30% 70%, rgba(90, 72, 48, 0.34), transparent 58%),
+        radial-gradient(ellipse at 55% 80%, rgba(90, 72, 48, 0.26), transparent 54%);
+}
+
+.right-mountain {
+    right: 40px;
+    bottom: 24px;
+    width: 420px;
+    height: 260px;
+    background:
+        radial-gradient(ellipse at 70% 100%, rgba(90, 72, 48, 0.48), transparent 62%),
+        radial-gradient(ellipse at 46% 100%, rgba(90, 72, 48, 0.32), transparent 56%),
+        radial-gradient(ellipse at 20% 100%, rgba(90, 72, 48, 0.23), transparent 52%);
+}
+
+.map-shell.satellite-mode .ink-mountain {
+    opacity: 0.08;
+}
+
+/* =========================
+   印章
+========================= */
+.seal-mark {
+    position: absolute;
+    right: 52px;
+    bottom: 72px;
+    z-index: 1000;
+    width: 58px;
+    height: 92px;
+    padding-top: 10px;
+    text-align: center;
+    font-size: 15px;
+    line-height: 18px;
+    font-weight: bold;
+    color: rgba(166, 73, 44, 0.76);
+    border: 3px solid rgba(166, 73, 44, 0.58);
+    background: rgba(246, 226, 193, 0.18);
+    transform: rotate(-4deg);
+    pointer-events: none;
+}
+
+/* =========================
+   右上信息卡
+========================= */
+.info-card {
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    z-index: 1300;
+    width: 356px;
+    padding: 24px 24px 20px;
+    color: #59391e;
+    background:
+        linear-gradient(145deg, rgba(255, 247, 226, 0.99), rgba(239, 220, 185, 0.98));
+    border: 3px solid rgba(115, 78, 40, 0.78);
+    border-radius: 20px;
+    box-shadow:
+        0 12px 28px rgba(76, 48, 20, 0.24),
+        inset 0 0 22px rgba(255, 250, 234, 0.88);
+}
+
+.info-card::before {
+    content: "";
+    position: absolute;
+    inset: 8px;
+    border: 1px solid rgba(132, 94, 51, 0.28);
+    border-radius: 14px;
+    pointer-events: none;
+}
+
+.card-title {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(120, 81, 40, 0.28);
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.card-title i {
+    color: #8c4d24;
+    font-size: 24px;
+}
+
+.info-row {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin: 13px 0;
+    color: #654528;
+}
+
+.info-row i {
+    width: 18px;
+    margin-top: 3px;
+    color: #8b5a2b;
+    font-size: 18px;
+}
+
+.info-row p {
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+/* 底图切换 */
+.basemap-switch {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.basemap-btn {
+    flex: 1;
+    height: 42px;
+    border: 1.5px solid rgba(125, 85, 43, 0.56);
+    border-radius: 999px;
+    background: rgba(241, 220, 183, 0.72);
+    color: #6a4524;
+    font-family: inherit;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.24s ease;
+}
+
+.basemap-btn:hover {
+    transform: translateY(-1px);
+    background: rgba(247, 228, 194, 0.95);
+}
+
+.basemap-btn.active {
+    color: #fff4de;
+    background: linear-gradient(135deg, #98602f, #75431f);
+    border-color: rgba(117, 67, 31, 0.92);
+    box-shadow: 0 6px 14px rgba(87, 52, 22, 0.18);
+}
+
+.divider {
+    position: relative;
+    z-index: 1;
+    margin: 18px 0;
+    border-top: 1px dashed rgba(121, 82, 41, 0.42);
+}
+
+.data-stats {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    gap: 14px;
+}
+
+.stat-box {
+    flex: 1;
+    min-height: 92px;
+    padding: 14px 10px;
+    text-align: center;
+    border-radius: 12px;
+    background: rgba(237, 214, 173, 0.60);
+    box-shadow: inset 0 0 12px rgba(255, 247, 227, 0.7);
+}
+
+.stat-box span {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 34px;
+    line-height: 1;
+    font-weight: bold;
+    color: #9b4d1f;
+}
+
+.stat-box.blue span {
+    color: #365d89;
+}
+
+.stat-box p {
+    font-size: 16px;
+    color: #604226;
+}
+
+/* =========================
+   左下图例
+========================= */
+.legend-card {
+    position: absolute;
+    left: 42px;
+    bottom: 42px;
+    z-index: 1500;
+    width: 290px;
+    padding: 22px 22px 18px;
+    background:
+        linear-gradient(145deg, rgba(255, 248, 229, 1), rgba(240, 221, 186, 1));
+    border: 3px solid rgba(115, 78, 40, 0.82);
+    border-radius: 18px;
+    box-shadow:
+        0 12px 28px rgba(76, 48, 20, 0.22),
+        inset 0 0 22px rgba(255, 250, 234, 0.88);
+}
+
+.legend-card::before {
+    content: "";
+    position: absolute;
+    inset: 8px;
+    border: 1px solid rgba(132, 94, 51, 0.24);
+    border-radius: 12px;
+    pointer-events: none;
+}
+
+.legend-title {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    color: #65411f;
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: 4px;
+}
+
+.legend-title span {
+    width: 38px;
+    height: 1px;
+    background: rgba(121, 82, 41, 0.52);
+}
+
+.legend-body {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.legend-row {
+    display: flex;
+    align-items: center;
+    min-height: 22px;
+    gap: 16px;
+}
+
+.legend-icon {
+    flex: 0 0 54px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.legend-text {
+    flex: 1;
+    color: #5f4124;
+    font-size: 16px;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.legend-station {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 3px solid #9b4d1f;
+    background: #f6e6c7;
+    box-shadow:
+        inset 0 0 0 3px #fff3dd,
+        0 0 0 1px rgba(96, 64, 33, 0.2);
+}
+
+.legend-road {
+    display: inline-block;
+    width: 48px;
+    height: 0;
+    border-top-width: 4px;
+    border-top-style: dashed;
+    border-radius: 999px;
+}
+
+.legend-road-west {
+    border-top-color: #b85c38;
+}
+
+.legend-road-south {
+    border-top-color: #5f8d4e;
+}
+
+.legend-road-east {
+    border-top-color: #416b9a;
+}
+
+.legend-road-north {
+    border-top-color: #8b5aa6;
+}
+
+.legend-tip {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    padding-top: 14px;
+    border-top: 1px dashed rgba(121, 82, 41, 0.42);
+    color: #7c5d3b;
+    font-size: 14px;
+}
+
+/* =========================
+   Leaflet 控件
+========================= */
+.leaflet-control-zoom {
+    border: none !important;
+    box-shadow: 0 8px 18px rgba(68, 43, 18, 0.18) !important;
+}
+
+.leaflet-control-zoom a {
+    color: #6b4320 !important;
+    background: rgba(255, 246, 224, 0.97) !important;
+    border-bottom: 1px solid rgba(118, 77, 38, 0.22) !important;
+}
+
+.leaflet-control-scale-line {
+    background: rgba(255, 244, 220, 0.92);
+    border-color: rgba(100, 67, 34, 0.7);
+    color: #5f4124;
+}
+
+.leaflet-control-attribution {
+    background: rgba(255, 246, 224, 0.86) !important;
+    color: #6a4b2e !important;
+}
+
+/* =========================
+   弹窗
+========================= */
+.custom-popup .leaflet-popup-content-wrapper {
+    background:
+        linear-gradient(145deg, rgba(255, 248, 230, 0.99), rgba(239, 220, 185, 0.98));
+    border: 2px solid rgba(121, 82, 41, 0.82);
+    border-radius: 16px;
+    box-shadow: 0 14px 30px rgba(65, 42, 20, 0.24);
+}
+
+.custom-popup .leaflet-popup-content {
+    margin: 18px 18px 16px;
+}
+
+.custom-popup .leaflet-popup-tip {
+    background: #f4dfb8;
+}
+
+.popup-inner {
+    width: 340px;
+    color: #54361c;
+}
+
+.popup-inner h4 {
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid rgba(132, 83, 38, 0.42);
+    color: #8b4513;
+    font-size: 25px;
+    letter-spacing: 2px;
+}
+
+.route-badge {
+    display: inline-block;
+    margin-bottom: 12px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    color: #fff8ea;
+    background: var(--badge-color);
+    font-size: 14px;
+}
+
+.section-title {
+    display: block;
+    margin-top: 11px;
+    margin-bottom: 5px;
+    padding-left: 8px;
+    color: #925124;
+    border-left: 4px solid #9b5a27;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.section-content {
+    margin-bottom: 6px;
+    color: #4f3924;
+    font-size: 15px;
+    line-height: 1.75;
+}
+
+/* 驿站悬浮标签 */
+.station-tooltip {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 999px;
+    color: #fff3dd;
+    background: rgba(91, 58, 28, 0.92);
+    box-shadow: 0 8px 18px rgba(64, 41, 19, 0.18);
+    font-size: 14px;
+}
+
+/* =========================
+   自适应
+========================= */
+@media screen and (max-width: 1200px) {
+    .map-title-banner {
+        min-width: 340px;
+    }
+
+    .map-title-banner h1 {
+        font-size: 24px;
+    }
+
+    .info-card {
+        width: 330px;
+        right: 26px;
+    }
+
+    .legend-card {
+        width: 260px;
+        left: 26px;
+    }
+
+    .province-watermark {
+        font-size: 46px;
+    }
+}

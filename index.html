@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>云南古驿道文学地图</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="page-frame">
+
+        <!-- 地图主体 -->
+        <div class="map-shell" id="mapShell">
+            <div id="map"></div>
+
+            <!-- 古风纸张纹理 -->
+            <div class="paper-texture"></div>
+            <div class="map-vignette"></div>
+
+            <!-- 顶部题签 -->
+            <div class="map-title-banner">
+                <span class="banner-small">滇云邮驿 · 行旅脉络</span>
+                <h1>云南古驿道文学地图</h1>
+            </div>
+
+            <!-- 罗盘 -->
+            <div class="compass">
+                <div class="north">北</div>
+                <div class="south">南</div>
+                <div class="west">西</div>
+                <div class="east">东</div>
+                <div class="needle"></div>
+                <div class="needle-horizontal"></div>
+            </div>
+
+            <!-- 云南省水印 -->
+            <div class="province-watermark">云南省</div>
+
+            <!-- 水墨装饰 -->
+            <div class="ink-mountain left-mountain"></div>
+            <div class="ink-mountain right-mountain"></div>
+
+            <!-- 印章 -->
+            <div class="seal-mark">
+                古<br>驿<br>寻<br>踪
+            </div>
+        </div>
+
+        <!-- 右上信息卡 -->
+        <div class="info-card">
+            <div class="card-title">
+                <i class="fas fa-horse"></i>
+                <span>云南古驿道文学地图</span>
+            </div>
+
+            <div class="info-row">
+                <i class="fas fa-map"></i>
+                <p><strong>地图模式：</strong>云南省界聚焦显示</p>
+            </div>
+
+            <div class="info-row">
+                <i class="fas fa-hand-pointer"></i>
+                <p><strong>交互方式：</strong>点击驿站查看介绍</p>
+            </div>
+
+            <div class="info-row">
+                <i class="fas fa-layer-group"></i>
+                <p><strong>当前底图：</strong><span id="currentBasemapName">古风底图</span></p>
+            </div>
+
+            <!-- 底图切换 -->
+            <div class="basemap-switch">
+                <button class="basemap-btn active" data-basemap="antique">古风底图</button>
+                <button class="basemap-btn" data-basemap="satellite">实景影像</button>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="data-stats">
+                <div class="stat-box">
+                    <span id="stationCount">28</span>
+                    <p>重点驿站</p>
+                </div>
+
+                <div class="stat-box blue">
+                    <span>4</span>
+                    <p>路线示意</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 左下图例 -->
+        <div class="legend-card">
+            <div class="legend-title">
+                <span></span>
+                图 例
+                <span></span>
+            </div>
+
+            <div class="legend-body">
+                <div class="legend-row">
+                    <div class="legend-icon">
+                        <span class="legend-station"></span>
+                    </div>
+                    <div class="legend-text">重点驿站</div>
+                </div>
+
+                <div class="legend-row">
+                    <div class="legend-icon">
+                        <span class="legend-road legend-road-west"></span>
+                    </div>
+                    <div class="legend-text">滇西古驿道</div>
+                </div>
+
+                <div class="legend-row">
+                    <div class="legend-icon">
+                        <span class="legend-road legend-road-south"></span>
+                    </div>
+                    <div class="legend-text">滇南茶马道</div>
+                </div>
+
+                <div class="legend-row">
+                    <div class="legend-icon">
+                        <span class="legend-road legend-road-east"></span>
+                    </div>
+                    <div class="legend-text">滇东入滇道</div>
+                </div>
+
+                <div class="legend-row">
+                    <div class="legend-icon">
+                        <span class="legend-road legend-road-north"></span>
+                    </div>
+                    <div class="legend-text">川滇联络道</div>
+                </div>
+            </div>
+
+            <div class="legend-tip">
+                <i class="fas fa-circle-info"></i>
+                点击驿站可查看详情
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="map.js"></script>
+</body>
+</html>
